@@ -1,0 +1,64 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: lambda function and execution role stack.
+Parameters:
+
+  StackUID:
+    Type: String
+
+Resources:
+
+  #
+  # Execution Role for Task and Poller Lambda functions (shared by all Tasks and the Poller)
+  #
+
+  BatchLambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: CanReadAndWriteS3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource: arn:aws:s3:::*
+        - PolicyName: CanCallBatch
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "batch:*"
+                Resource: "*"
+        - PolicyName: CanLog
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:*
+              Resource: arn:aws:logs:*:*:*
+        - PolicyName: ContainerDDBAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                Resource:
+                  Fn::ImportValue:
+                    Fn::Sub: 'PipelineTable-${StackUID}'
+
+  #
+  # Lambdas
+  #
+

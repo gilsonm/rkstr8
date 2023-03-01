@@ -1,0 +1,44 @@
+---
+Type: AWS::Batch::JobDefinition
+Properties:
+  ContainerProperties:
+    Image: "PathToImage"
+    Memory: -1
+    Vcpus: -1
+    Command: []
+    JobRoleArn:
+      Ref: "RoleLRI"
+    MountPoints:
+      # location of volume directory in container
+    - ContainerPath: /home/localDir/
+      ReadOnly: false
+      # this is a logical name used to reference an element in the Volumes section
+      SourceVolume: localDir
+    - ContainerPath: /home/fsx/
+      ReadOnly: false
+      # this is a logical name used to reference an element in the Volumes section
+      SourceVolume: fsx
+    Privileged: false
+    Ulimits:
+    - HardLimit: 90000
+      SoftLimit: 90000
+      Name: nofile
+    ReadonlyRootFilesystem: false
+    Volumes:
+    - Host:
+        # location of volume directory on host
+        SourcePath: /mnt/data/
+      # this is a logical name used to by reference from MountPoints element
+      Name: "localDir"
+    - Host:
+        # location of volume directory on host
+        SourcePath: /mnt/fsx/
+      # this is a logical name used to by reference from MountPoints element
+      Name: "fsx"
+  JobDefinitionName: "JobDefName"
+  RetryStrategy:
+    Attempts: 2
+  Type: container
+DependsOn:
+  - "RoleLRI"
+

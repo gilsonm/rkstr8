@@ -1,0 +1,84 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Master template for wgs-pipeline. Calls to other stack templates."
+Parameters:
+  GPCESubnetAZ1:
+    Type: String
+  StackUID:
+    Type: String
+  StackName:
+    Type: String
+  NetworkTemplateURL:
+    Type: String
+  LambdaTemplateURL:
+    Type: String
+  StepFunctionsTemplateURL:
+    Type: String
+  BatchTemplateURL:
+    Type: String
+  DynamoDbTemplateURL:
+    Type: String
+
+
+Resources:
+
+# Pass down the Stack UID to all the child stacks that will be exporting/importing values.
+
+  NetworkResourcesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        GPCESubnetAZ1: 
+          Ref: GPCESubnetAZ1
+        StackUID:
+          Ref: StackUID 
+      TemplateURL: 
+        Ref: NetworkTemplateURL
+      TimeoutInMinutes: 10
+
+  LambdaResourcesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackUID:
+          Ref: StackUID
+      TemplateURL:
+        Ref: LambdaTemplateURL
+      TimeoutInMinutes: 10
+    DependsOn: DynamoDbResourcesStack
+
+  StepFunctionResourcesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackUID: 
+          Ref: StackUID
+      TemplateURL: 
+        Ref: StepFunctionsTemplateURL
+      TimeoutInMinutes: 10
+    DependsOn: LambdaResourcesStack
+
+  BatchResourcesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackUID:
+          Ref: StackUID
+        StackName:
+          Ref: StackName
+      TemplateURL: 
+        Ref: BatchTemplateURL 
+      TimeoutInMinutes: 10
+    DependsOn:
+      - NetworkResourcesStack
+      - DynamoDbResourcesStack
+
+  DynamoDbResourcesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackUID:
+          Ref: StackUID
+      TemplateURL:
+        Ref: DynamoDbTemplateURL
+      TimeoutInMinutes: 10

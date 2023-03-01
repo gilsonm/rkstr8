@@ -1,0 +1,42 @@
+---
+Type: "AWS::Batch::ComputeEnvironment"
+Properties:
+  Type: MANAGED
+  ComputeEnvironmentName:
+    Fn::Join: ['-', ['PipelineCluster', Ref: StackUID]]
+  ComputeResources:
+    MinvCpus: -1
+    MaxvCpus: -1
+    DesiredvCpus: -1
+    SecurityGroupIds:
+      - Fn::ImportValue:
+          Fn::Sub: '${StackUID}-SecurityGroup'
+    Subnets:
+      - Fn::ImportValue:
+          Fn::Sub: '${StackUID}-Subnet'
+    Type: 'SPOT'
+    BidPercentage: 60
+    SpotIamFleetRole:
+      Ref: BatchSpotIAMFleetServiceRole
+#    ImageId: "ami-id"
+    InstanceRole:
+      Ref: IamInstanceProfile
+    InstanceTypes: []
+    Ec2KeyPair: "keypair-from-runconf"
+#    LaunchTemplate:
+#      LaunchTemplateName:
+#          Fn::Sub: 'FSxLaunch-${StackUID}'
+    Tags:
+#      Key: Name
+      #Value: ${StackName}
+#      Value:
+      Name:
+          Fn::Sub: 'Compute-${StackUID}'
+  ServiceRole:
+    Ref: BatchServiceRole
+  State: ENABLED
+DependsOn:
+  - IamInstanceProfile
+  - BatchServiceRole
+  - BatchSpotIAMFleetServiceRole
+#  - FSxLaunchTemplate

@@ -1,0 +1,202 @@
+# There are no repeated components, so I've pasted the entire section here
+
+# Need to pass in Batch parameters from the master template.
+
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: batch resources stack.
+Parameters:
+  StackUID:
+    Type: String
+  StackName:
+    Type: String
+
+Resources:
+
+  BatchServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: batch.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
+
+  BatchSpotIAMFleetServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: spotfleet.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole
+
+  IamInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Roles:
+      - Ref: 'EcsInstanceRole'
+
+  EcsInstanceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2008-10-17'
+        Statement:
+        - Sid: ''
+          Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+      Policies:
+        - PolicyName: FSxFullAccess
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - fsx:*
+              Resource: "*"
+
+  GeneralPurposeContainerRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+                - batch.amazonaws.com
+            Action:
+            - sts:AssumeRole
+      Path: '/'
+      Policies:
+        - PolicyName: ContainerBatchAccess
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - batch:SubmitJob
+              Resource: "*"
+        - PolicyName: ContainerDDBAccess
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              Resource:
+                Fn::ImportValue:
+                  Fn::Sub: 'PipelineTable-${StackUID}'
+        - PolicyName: ContainerS3Access
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - s3:*
+              Resource:
+              # TODO: This is massive violation of Principle of Least Privilage
+              # Only workaround can think of is taking user settings of input/output/ref buckets and building
+              # ARNs in place here. Or possibly processing the template in Python.
+              - arn:aws:s3:::*
+            - Effect: Allow
+              Action:
+              - s3:*
+              Resource:
+              # TODO: This is massive violation of Principle of Least Privilage
+              # Only workaround can think of is taking user settings of input/output/ref buckets and building
+              # ARNs in place here. Or possibly processing the template in Python.
+              - arn:aws:s3:::*
+
+#
+# TODO: Optionally include FSx, and configure it in spec/config
+#
+# Can use a TemplateProcessor to add the resource from a yaml fragment of the comment below.
+# Parametrize in pythong templating as opposed to push a new parameter through app into CloudFormation through parent-
+# child templates etc.
+#
+# E.g.
+#     fsx_resources = with open the template fragment below "FSxLustreFileSystem"... yaml.safe_load
+#     resource_ids ??
+#
+#     # configure fsx_resources dictionary with defaults from Config and overrides from user settings
+#     # ...
+#
+#     batch_final_template = TemplateProcessor([this batch template + job defs \
+#       .from_yaml(as_path=True) \
+#       .add_resources(resource_ids, definitions=fsx_resources) \
+#       .to_yaml()
+#
+
+
+#  FSxLustreFileSystem:
+#    Type: AWS::FSx::FileSystem
+#    Properties:
+#      FileSystemType: "LUSTRE"
+      # TODO I believe you pay just to have this provisioned: $0.140/GB-month / 30 / 24 = $0.000194/GB-hour
+#      StorageCapacity: 720
+      # The SubnetId for the workflow
+#      SubnetIds:
+#        - Fn::ImportValue:
+#            Fn::Sub: '${StackUID}-Subnet'
+      # A SecurityGroup with
+      #      Type	Protocol	Port Range	Source	Description
+      #      TCP	6	988	The ID of this security group	Access to your file system over the Lustre protocol
+#      SecurityGroupIds:
+#        - Fn::ImportValue:
+#            Fn::Sub: '${StackUID}-SecurityGroup'
+#        - Fn::ImportValue:
+#            Fn::Sub: '${StackUID}-FsxLustreSecurityGroup'
+#      Tags:
+#        - Key: "Name"
+          #Value: "FSxLustrePipeline"
+#        - Key: "Name"
+#          Value:
+#            Fn::Sub: 'FSx-${StackUID}'
+#        - Key: "StorageCapacity"
+#          Value: "7200GB"
+#      LustreConfiguration: {}
+        # None of this is needed for now
+#        ImportPath: null
+#        ExportPath: null
+#        WeeklyMaintenanceStartTime: null
+
+#  FSxLaunchTemplate:
+#    Type: AWS::EC2::LaunchTemplate
+#    Properties:
+#      LaunchTemplateName:
+#          Fn::Sub: 'FSxLaunch-${StackUID}'
+#      LaunchTemplateData:
+#        UserData:
+#          Fn::Base64:
+#            Fn::Sub:
+#              - |
+#                  MIME-Version: 1.0
+#                  Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
+#
+#                  --==MYBOUNDARY==
+#                  MIME-Version: 1.0
+#                  Content-Type: text/x-shellscript; charset="us-ascii"
+#
+#                  !/bin/bash
+#                   Exchange FS_ID for FS_DNS using AWS CLI
+#                  export FSX_DNS=$(aws fsx describe-file-systems --file-system-ids "${FSX_ID_CFN}" --region us-east-1 | jq -r '.FileSystems[0].DNSName')
+#                  mount -t lustre -o noatime "$FSX_DNS"@tcp:/fsx /mnt/fsx
+#                  df -h > /mnt/fsx/df.txt
+#
+#                  --==MYBOUNDARY==--
+#              - 'FSX_ID_CFN':
+#                  Ref: FSxLustreFileSystem
+#    DependsOn:
+#      - FSxLustreFileSystem

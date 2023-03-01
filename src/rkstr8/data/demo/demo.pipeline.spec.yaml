@@ -1,0 +1,24 @@
+---
+Pipeline:
+  Cluster:
+    cpus:
+      min: 0
+      max: 4
+      desired: 4
+    instances:
+      - optimal
+  Queues:
+    - main
+  Stages:
+    helloworld:
+      aggregate:
+        type: simple
+        name: helloworld
+      queue: main
+      job:
+        cpus: 4
+        mem: 4 GB
+        image: rkstr8/hellotask:1.0
+        cmd:
+          - python3.8
+          - taskdefs.py

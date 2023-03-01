@@ -1,0 +1,14 @@
+---
+Type: 'AWS::Batch::JobQueue'
+Properties:
+  ComputeEnvironmentOrder:
+    - ComputeEnvironment:
+        Ref: 'ClusterName'
+      Order: 1
+  JobQueueName:
+    Fn::Join: [ '-', ['QueueName', Ref: StackUID] ]
+  Priority: 10
+  State: ENABLED
+DependsOn:
+  - 'ClusterName'
+  - BatchServiceRole

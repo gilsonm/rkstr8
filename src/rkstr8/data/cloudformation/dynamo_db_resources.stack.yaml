@@ -1,0 +1,32 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: DynamoDB resources stack.
+
+Parameters:
+  StackUID:
+    Type: String
+
+Resources:
+
+  ResultsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        'Fn::Sub': 'PipelineTable-${StackUID}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        -
+          AttributeName: "RecordId"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "RecordId"
+          KeyType: "HASH"
+
+Outputs:
+  TableArn:
+    Export:
+      Name:
+        Fn::Sub: 'PipelineTable-${StackUID}'
+    Value:
+      Fn::GetAtt: [ResultsTable, 'Arn']
