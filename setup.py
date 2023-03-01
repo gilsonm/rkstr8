@@ -39,8 +39,5 @@ setuptools.setup(
         'console_scripts': [
             'rkstr8 = rkstr8.__main__:cli', # cli is a function from src/rkstr8/__main__.py
         ]
-    },
-    cmdclass={
-        'build': CustomBuildCommand
     }
 )
