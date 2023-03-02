@@ -27,9 +27,10 @@ class State(enum.Enum):
 
 class Action(abc.ABC):
     '''Combination of Command and Observer patterns for concurrent execution of a directed acyclic graph of actions.
-       Control-flow is controlled by a producer-consumer model using a queue, with a pool of consumers. The call stack
-       is only used for the Command aspect of the pattern, the observer pattern is used to enqueue actions only when
-       their dependencies are complete.
+       Execution of the top-level Action DAG is managed by a producer-consumer model using a queue and pool of consumer
+       threads. Control flow within each Action (and its collaborating objects), as implemented by the work method,
+       should be isolated from the remaining Actions and in-general use the call stack. The observer pattern is used to
+       notify and enqueue pending actions only when their dependent actions are complete and dependencies available.
     '''
 
     def __init__(self, q: queue.Queue, produces: List[str], dependencies: Dict[str, Action]):
