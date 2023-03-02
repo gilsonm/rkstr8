@@ -1,7 +1,13 @@
+"""
+Inversion-of-control micro-framework for parallel execution of a directed acyclic graph of actions. Useful for both
+CPU-intensive and IO-bound tasks. Demonstrated in the RKSTR8 batch processing platform initialization process.
+
+Author: Michael Gilson
+"""
 from __future__ import annotations
 import abc
 import enum
-from typing import List, Dict, Callable, Any
+from typing import List, Dict, Callable, Any, Iterable
 import queue
 import threading
 import multiprocessing
@@ -114,7 +120,7 @@ class ActionConsumer(threading.Thread):
 
 class Executor:
 
-    def __init__(self, q: queue.Queue, actions: List[Action]):
+    def __init__(self, q: queue.Queue, actions: Iterable[Action]):
         self.q = q
         self.actions = actions
         # controls whether consumers should continue consuming the queue. triggered by an action failing.
