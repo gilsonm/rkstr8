@@ -29,25 +29,28 @@ RKSTR8 as a python module and using the simple `launch` API.
 
 1. Liang L, Fazel Darbandi S, Pochareddy S, Gulden FO, Gilson MC, Sheppard BK, Sahagun A, An JY, 
    Werling DM, Rubenstein JLR, Sestan N, Bender KJ, Sanders SJ.  
-   **Developmental dynamics of voltage-gated sodium channel isoform expression in the human and mouse 
-   brain.** *Genome Med*. 2021 Aug 23;13(1):135. doi: 10.1186/s13073-021-00949-0. PMID: 34425903; PMCID: PMC8383430.
+   [Developmental dynamics of voltage-gated sodium channel isoform expression in the human and mouse 
+   brain.](https://pubmed.ncbi.nlm.nih.gov/34425903/) **Genome Med**. 2021 Aug 23;13(1):135. doi: 
+   10.1186/s13073-021-00949-0. PMID: 34425903; PMCID: PMC8383430.
 2. Werling DM, Pochareddy S, Choi J, An JY, Sheppard B, Peng M, Li Z, Dastmalchi C, Santpere G, 
    Sousa AMM, Tebbenkamp ATN, Kaur N, Gulden FO, Breen MS, Liang L, Gilson MC, Zhao X, Dong S, 
    Klei L, Cicek AE, Buxbaum JD, Adle-Biassette H, Thomas JL, Aldinger KA, O'Day DR, Glass IA, 
-   Zaitlen NA, Talkowski ME, Roeder K, State MW, Devlin B, Sanders SJ, Sestan N. **Whole-Genome and 
+   Zaitlen NA, Talkowski ME, Roeder K, State MW, Devlin B, Sanders SJ, Sestan N. [Whole-Genome and 
    RNA Sequencing Reveal Variation and Transcriptomic Coordination in the Developing Human 
-   Prefrontal Cortex.** *Cell Reports*. 2020 Apr 7;31(1):107489. doi: 10.1016/j.celrep.2020.03.053.  PMID: 32268104; PMCID: PMC7295160.
+   Prefrontal Cortex.](https://pubmed.ncbi.nlm.nih.gov/32268104/) **Cell Reports**. 2020 Apr 7;31(1):107489. doi: 
+   10.1016/j.celrep.2020.03.053.  PMID: 32268104; PMCID: PMC7295160.
 3. An JY, Lin K, Zhu L, Werling DM, Dong S, Brand H, Wang HZ, Zhao X, Schwartz GB, Collins RL, 
    Currall BB, Dastmalchi C, Dea J, Duhn C, Gilson MC, Klei L, Liang L, Markenscoff-Papadimitriou E, 
    Pochareddy S, Ahituv N, Buxbaum JD, Coon H, Daly MJ, Kim YS, Marth GT, Neale BM, Quinlan AR, 
    Rubenstein JL, Sestan N, State MW, Willsey AJ, Talkowski ME, Devlin B, Roeder K, Sanders SJ. 
-   **Genome-wide de novo risk score implicates promoter variation in autism spectrum disorder.** *Science*. 2018 Dec 14;362(6420):eaat6576. doi: 10.1126/science.aat6576. PMID: 30545852; PMCID: PMC6432922.
+   [Genome-wide de novo risk score implicates promoter variation in autism spectrum disorder.](https://pubmed.ncbi.nlm.nih.gov/30545852/) 
+   **Science**. 2018 Dec 14;362(6420):eaat6576. doi: 10.1126/science.aat6576. PMID: 30545852; PMCID: PMC6432922.
 4. Werling DM, Brand H, An JY, Stone MR, Zhu L, Glessner JT, Collins RL, Dong S, Layer RM, 
    Markenscoff-Papadimitriou E, Farrell A, Schwartz GB, Wang HZ, Currall BB, Zhao X, Dea J, 
    Duhn C, Erdman CA, Gilson MC, Yadav R, Handsaker RE, Kashin S, Klei L, Mandell JD, 
    Nowakowski TJ, Liu Y, Pochareddy S, Smith L, Walker MF, Waterman MJ, He X, Kriegstein AR, 
    Rubenstein JL, Sestan N, McCarroll SA, Neale BM, Coon H, Willsey AJ, Buxbaum JD, Daly MJ, 
-   State MW, Quinlan AR, Marth GT, Roeder K, Devlin B, Talkowski ME, Sanders SJ. **An analytical 
-   framework for whole- genome sequence association studies and its implications for autism spectrum disorder.** 
-   *Nature Genetics*. 2018 Apr 26;50(5):727-736. doi: 10.1038/s41588-018-0107-y.  
+   State MW, Quinlan AR, Marth GT, Roeder K, Devlin B, Talkowski ME, Sanders SJ. [An analytical 
+   framework for whole- genome sequence association studies and its implications for autism spectrum disorder.](https://pubmed.ncbi.nlm.nih.gov/29700473/)
+   **Nature Genetics**. 2018 Apr 26;50(5):727-736. doi: 10.1038/s41588-018-0107-y.  
    PMID: 29700473; PMCID: PMC5961723.
